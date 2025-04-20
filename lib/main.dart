@@ -1,14 +1,10 @@
 String getGreetingByTime(String timeOfDay) {
-  switch (timeOfDay) {
-    case 'morning':
-      return 'おはようございます';
-    case 'afternoon':
-      return 'こんにちは';
-    case 'evening':
-      return 'こんばんは';
-    default:
-      return 'こんにちは（時間帯不明）';
-  }
+  return switch (timeOfDay) {
+    'morning' => 'おはようございます',
+    'afternoon' => 'こんにちは',
+    'evening' => 'こんばんは',
+    _ => 'こんにちは（時間帯不明）',
+  };
 }
 
 void main() {
