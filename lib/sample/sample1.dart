@@ -84,3 +84,47 @@ void main() {
   print(partTimer.getEmployeeDescription());
   print("昇給対象: ${partTimer.isEligibleForRaise()}");
 }
+
+// /// リファクタリング前
+
+// enum EmployeeType {
+//   manager,
+//   engineer,
+//   partTime,
+// }
+
+// class Employee {
+//   EmployeeType type;
+//   double monthlySalary;
+//   int hoursWorked;
+//   double hourlyRate;
+
+//   Employee(this.type,
+//       {this.monthlySalary = 0, this.hoursWorked = 0, this.hourlyRate = 0});
+// }
+
+// double calculateSalary(Employee employee) {
+//   if (employee.type == EmployeeType.manager) {
+//     // マネージャーの給与計算
+//     return employee.monthlySalary;
+//   } else if (employee.type == EmployeeType.engineer) {
+//     // エンジニアの給与計算
+//     return employee.monthlySalary;
+//   } else if (employee.type == EmployeeType.partTime) {
+//     // パートタイマーの給与計算
+//     return employee.hoursWorked * employee.hourlyRate;
+//   } else {
+//     throw Exception("Invalid employee type");
+//   }
+// }
+
+// void main() {
+//   final manager = Employee(EmployeeType.manager, monthlySalary: 500000);
+//   final engineer = Employee(EmployeeType.engineer, monthlySalary: 400000);
+//   final partTimer =
+//       Employee(EmployeeType.partTime, hoursWorked: 160, hourlyRate: 1500);
+
+//   print("Manager Salary: ${calculateSalary(manager)}");
+//   print("Engineer Salary: ${calculateSalary(engineer)}");
+//   print("Part-timer Salary: ${calculateSalary(partTimer)}");
+// }
