@@ -3,6 +3,7 @@
 // abstract interface class Bird {
 //   bool canFly();
 //   bool hasBeak();
+//   bool canSwim(); // 新規追加
 // }
 
 // class CommonBird implements Bird {
@@ -11,11 +12,17 @@
 
 //   @override
 //   bool hasBeak() => true;
+
+//   @override
+//   bool canSwim() => false; // 新規追加
 // }
 
 // class Penguin extends CommonBird {
 //   @override
 //   bool canFly() => false;
+
+//   // 新規追加が必要ない場合、CommonBirdの実装をそのまま利用できる
+//   // と言うことはペンギンが泳げないことになってしまう。。。
 // }
 
 // 合成を用いるパターン
