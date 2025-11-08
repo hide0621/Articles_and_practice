@@ -71,3 +71,9 @@ class Penguin implements Bird {
 //   @override
 //   bool canFly() => false;
 // }
+
+void main() {
+  final penguin = Penguin();
+  print("ペンギンはくちばしを持っているか: ${penguin.hasBeak()}");
+  print("ペンギンは飛べるか: ${penguin.canFly()}");
+}
