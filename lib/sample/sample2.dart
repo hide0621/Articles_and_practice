@@ -23,6 +23,7 @@
 abstract interface class Bird {
   bool hasBeak();
   bool canFly();
+  bool canSwim(); // 新規追加
 }
 
 class CommonBird implements Bird {
@@ -33,6 +34,9 @@ class CommonBird implements Bird {
 
   @override
   bool canFly() => true;
+
+  @override
+  bool canSwim() => false; // 新規追加
 }
 
 // パターン1: デフォルト値を使用（最もシンプル）
@@ -46,6 +50,9 @@ class Penguin implements Bird {
 
   @override
   bool canFly() => false;
+
+  @override
+  bool canSwim() => true; // 新規追加
 }
 
 // パターン2: 依存性の注入（テスタビリティが高い）
