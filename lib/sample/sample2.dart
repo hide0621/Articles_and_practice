@@ -37,6 +37,8 @@ class CommonBird implements Bird {
 
 // パターン1: デフォルト値を使用（最もシンプル）
 class Penguin implements Bird {
+  Penguin();
+
   final CommonBird _commonBird = CommonBird();
 
   @override
