@@ -145,3 +145,250 @@ class DataRepository {
 // 切り替え
 final repo1 = DataRepository(fetchFromApi);
 final repo2 = DataRepository(fetchFromCache);
+
+
+// ストラテジーパターン適用後（合成パターン適用版）: 
+// キャッシュ機能は具象クラスに分離させ、Cotextで切り替え可能にする設計
+// 継承ではなく、合成によって共通機能を再利用する
+
+// Strategy インターフェース
+abstract interface class DataFetchStrategy {
+  Future<List<Item>> fetch(String id);
+  void clearCache();
+  bool get isReady;
+}
+
+// 基本実装: 共通機能を提供するベースクラス
+class BaseDataFetchStrategy implements DataFetchStrategy {
+  BaseDataFetchStrategy();
+
+  @override
+  bool get isReady => true;
+
+  @override
+  Future<List<Item>> fetch(String id) async {
+    return await api.getItems(id);
+  }
+
+  @override
+  void clearCache() {
+    // デフォルトでは何もしない
+  }
+}
+
+// 実装1: キャッシュ付き（合成を使用）
+class CachedDataFetchStrategy implements DataFetchStrategy {
+  CachedDataFetchStrategy();
+
+  // 合成: 基本機能を持つクラスをプライベートフィールドとして保持
+  final BaseDataFetchStrategy _baseStrategy = BaseDataFetchStrategy();
+  final Map<String, List<Item>> _cache = {};
+  bool _initialized = false;
+
+  @override
+  bool get isReady => _initialized;
+
+  void initialize() {
+    _initialized = true;
+  }
+
+  @override
+  Future<List<Item>> fetch(String id) async {
+    if (_cache.containsKey(id)) {
+      return _cache[id]!;
+    }
+    // 基本機能を委譲
+    final data = await _baseStrategy.fetch(id);
+    _cache[id] = data;
+    return data;
+  }
+
+  @override
+  void clearCache() {
+    _cache.clear();
+  }
+}
+
+// 実装2: 直接取得（合成を使用）
+class DirectDataFetchStrategy implements DataFetchStrategy {
+  DirectDataFetchStrategy();
+
+  // 合成: 基本機能を持つクラスをプライベートフィールドとして保持
+  final BaseDataFetchStrategy _baseStrategy = BaseDataFetchStrategy();
+
+  @override
+  bool get isReady => _baseStrategy.isReady;
+
+  @override
+  Future<List<Item>> fetch(String id) async {
+    // 基本機能を委譲
+    return _baseStrategy.fetch(id);
+  }
+
+  @override
+  void clearCache() {
+    // 基本機能を委譲
+    _baseStrategy.clearCache();
+  }
+}
+
+// 使用例
+class DataRepository {
+  DataRepository(this.strategy);
+
+  final DataFetchStrategy strategy;
+
+  Future<List<Item>> getData(String id) async {
+    if (!strategy.isReady) {
+      throw StateError('Strategy not ready');
+    }
+    return strategy.fetch(id);
+  }
+
+  void refresh() {
+    strategy.clearCache();
+  }
+}
+
+// 切り替え
+final cachedStrategy = CachedDataFetchStrategy();
+cachedStrategy.initialize();
+final repo1 = DataRepository(cachedStrategy);
+final repo2 = DataRepository(DirectDataFetchStrategy());
+
+// ストラテジーパターン適用後（関数型）: 関数を使ってContextで切り替える設計
+// 関数の型定義
+typedef DataFetcher = Future<List<Item>> Function(String id);
+
+// 各実装
+Future<List<Item>> fetchFromApi(String id) async {
+  return await api.getItems(id);
+}
+
+Future<List<Item>> fetchFromCache(String id) async {
+  return cache.get(id);
+}
+
+// 使用例
+class DataRepository {
+  DataRepository(this.fetcher);
+
+  final DataFetcher fetcher;
+
+  Future<List<Item>> getData(String id) {
+    return fetcher(id);
+  }
+}
+
+// 切り替え
+final repo1 = DataRepository(fetchFromApi);
+final repo2 = DataRepository(fetchFromCache);
+
+// ストラテジーパターン適用後（合成パターン適用版）: 
+// キャッシュ機能は具象クラスに分離させ、Cotextで切り替え可能にする設計
+// 継承ではなく、合成によって共通機能を再利用する
+
+// Strategy インターフェース
+abstract interface class DataFetchStrategy {
+  Future<List<Item>> fetch(String id);
+  void clearCache();
+  bool get isReady;
+}
+
+// 基本実装: 共通機能を提供するベースクラス
+class BaseDataFetchStrategy implements DataFetchStrategy {
+  BaseDataFetchStrategy();
+
+  @override
+  bool get isReady => true;
+
+  @override
+  Future<List<Item>> fetch(String id) async {
+    return await api.getItems(id);
+  }
+
+  @override
+  void clearCache() {
+    // デフォルトでは何もしない
+  }
+}
+
+// 実装1: キャッシュ付き（合成を使用）
+class CachedDataFetchStrategy implements DataFetchStrategy {
+  CachedDataFetchStrategy();
+
+  // 合成: 基本機能を持つクラスをプライベートフィールドとして保持
+  final BaseDataFetchStrategy _baseStrategy = BaseDataFetchStrategy();
+  final Map<String, List<Item>> _cache = {};
+  bool _initialized = false;
+
+  @override
+  bool get isReady => _initialized;
+
+  void initialize() {
+    _initialized = true;
+  }
+
+  @override
+  Future<List<Item>> fetch(String id) async {
+    if (_cache.containsKey(id)) {
+      return _cache[id]!;
+    }
+    // 基本機能を委譲
+    final data = await _baseStrategy.fetch(id);
+    _cache[id] = data;
+    return data;
+  }
+
+  @override
+  void clearCache() {
+    _cache.clear();
+  }
+}
+
+// 実装2: 直接取得（合成を使用）
+class DirectDataFetchStrategy implements DataFetchStrategy {
+  DirectDataFetchStrategy();
+
+  // 合成: 基本機能を持つクラスをプライベートフィールドとして保持
+  final BaseDataFetchStrategy _baseStrategy = BaseDataFetchStrategy();
+
+  @override
+  bool get isReady => _baseStrategy.isReady;
+
+  @override
+  Future<List<Item>> fetch(String id) async {
+    // 基本機能を委譲
+    return _baseStrategy.fetch(id);
+  }
+
+  @override
+  void clearCache() {
+    // 基本機能を委譲
+    _baseStrategy.clearCache();
+  }
+}
+
+// 使用例
+class DataRepository {
+  DataRepository(this.strategy);
+
+  final DataFetchStrategy strategy;
+
+  Future<List<Item>> getData(String id) async {
+    if (!strategy.isReady) {
+      throw StateError('Strategy not ready');
+    }
+    return strategy.fetch(id);
+  }
+
+  void refresh() {
+    strategy.clearCache();
+  }
+}
+
+// 切り替え
+final cachedStrategy = CachedDataFetchStrategy();
+cachedStrategy.initialize();
+final repo1 = DataRepository(cachedStrategy);
+final repo2 = DataRepository(DirectDataFetchStrategy());
