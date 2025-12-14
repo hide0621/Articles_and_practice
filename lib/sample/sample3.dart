@@ -44,16 +44,22 @@
 // // または
 // repo.setUseCache(false); // 直接取得
 
-// ストラテジーパターン適用後: キャッシュ機能は具象クラスに分離させ、Cotextで切り替え可能にする設計
-// Strategy インターフェース
+// ストラテジーパターン適用後: 
+// キャッシュ機能は具象クラスに分離させ、Cotextで切り替え可能にする設計
+// かつ、インターフェース分離の原則を適用し、必要なメソッドのみを持つインターフェースに分けている
+// Strategy インターフェース（基本）
 abstract interface class DataFetchStrategy {
   Future<List<Item>> fetch(String id);
-  void clearCache();
   bool get isReady;
 }
 
+// キャッシュ機能を持つStrategy用のインターフェース
+abstract interface class CacheableDataFetchStrategy implements DataFetchStrategy {
+  void clearCache();
+}
+
 // 実装1: キャッシュ付き
-class CachedDataFetchStrategy implements DataFetchStrategy {
+class CachedDataFetchStrategy implements CacheableDataFetchStrategy {
   final Map<String, List<Item>> _cache = {};
   bool _initialized = false;
 
@@ -89,11 +95,6 @@ class DirectDataFetchStrategy implements DataFetchStrategy {
   Future<List<Item>> fetch(String id) async {
     return await api.getItems(id);
   }
-
-  @override
-  void clearCache() {
-    // 何もしない
-  }
 }
 
 // 使用例
@@ -110,7 +111,13 @@ class DataRepository {
   }
 
   void refresh() {
-    strategy.clearCache();
+    // キャッシュ機能を持つストラテジーの場合のみクリア
+    switch (strategy) {
+      case CacheableDataFetchStrategy s:
+        s.clearCache();
+      default:
+        throw UnsupportedError('Strategy does not support cache operations');
+    }
   }
 }
 
