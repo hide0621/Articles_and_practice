@@ -257,12 +257,6 @@ class DataRepository {
   }
 }
 
-// 切り替え
-final cachedStrategy = CachedDataFetchStrategy();
-cachedStrategy.initialize();
-final repo1 = DataRepository(cachedStrategy);
-final repo2 = DataRepository(DirectDataFetchStrategy());
-
 // ストラテジーパターン適用後（関数型）: 関数を使ってContextで切り替える設計
 // 関数の型定義
 typedef DataFetcher = Future<List<Item>> Function(String id);
@@ -291,15 +285,20 @@ class DataRepository {
 final repo1 = DataRepository(fetchFromApi);
 final repo2 = DataRepository(fetchFromCache);
 
-// ストラテジーパターン適用後（合成パターン適用版）: 
+// ストラテジーパターン適用後（合成パターン）: 
 // キャッシュ機能は具象クラスに分離させ、Cotextで切り替え可能にする設計
-// 継承ではなく、合成によって共通機能を再利用する
+// かつ、インターフェース分離の原則を適用し、必要なメソッドのみを持つインターフェースに分ける
+// かつ、継承ではなく合成によって共通機能を再利用する
 
-// Strategy インターフェース
+// Strategy インターフェース（基本）
 abstract interface class DataFetchStrategy {
   Future<List<Item>> fetch(String id);
-  void clearCache();
   bool get isReady;
+}
+
+// キャッシュ機能を持つStrategy用のインターフェース
+abstract interface class CacheableDataFetchStrategy implements DataFetchStrategy {
+  void clearCache();
 }
 
 // 基本実装: 共通機能を提供するベースクラス
@@ -313,15 +312,10 @@ class BaseDataFetchStrategy implements DataFetchStrategy {
   Future<List<Item>> fetch(String id) async {
     return await api.getItems(id);
   }
-
-  @override
-  void clearCache() {
-    // デフォルトでは何もしない
-  }
 }
 
-// 実装1: キャッシュ付き（合成を使用）
-class CachedDataFetchStrategy implements DataFetchStrategy {
+// 実装1: キャッシュ付き（合成 + ISPを使用）
+class CachedDataFetchStrategy implements CacheableDataFetchStrategy {
   CachedDataFetchStrategy();
 
   // 合成: 基本機能を持つクラスをプライベートフィールドとして保持
@@ -368,12 +362,6 @@ class DirectDataFetchStrategy implements DataFetchStrategy {
     // 基本機能を委譲
     return _baseStrategy.fetch(id);
   }
-
-  @override
-  void clearCache() {
-    // 基本機能を委譲
-    _baseStrategy.clearCache();
-  }
 }
 
 // 使用例
@@ -390,7 +378,13 @@ class DataRepository {
   }
 
   void refresh() {
-    strategy.clearCache();
+    // キャッシュ機能を持つストラテジーの場合のみクリア
+    switch (strategy) {
+      case CacheableDataFetchStrategy s:
+        s.clearCache();
+      default:
+        throw UnsupportedError('Strategy does not support cache operations');
+    }
   }
 }
 
