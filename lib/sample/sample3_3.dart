@@ -1,7 +1,14 @@
-// ストラテジーパターン適用後（合成パターン）: 
+// ストラテジーパターン適用後（合成パターン）:
 // キャッシュ機能は具象クラスに分離させ、Cotextで切り替え可能にする設計
 // かつ、インターフェース分離の原則を適用し、必要なメソッドのみを持つインターフェースに分ける
 // かつ、継承ではなく合成によって共通機能を再利用する
+
+// ダミー型定義
+class Item {}
+
+class Api {
+  Future<List<Item>> getItems(String id) async => [];
+}
 
 // Strategy インターフェース（基本）
 abstract interface class DataFetchStrategy {
@@ -10,7 +17,8 @@ abstract interface class DataFetchStrategy {
 }
 
 // キャッシュ機能を持つStrategy用のインターフェース
-abstract interface class CacheableDataFetchStrategy implements DataFetchStrategy {
+abstract interface class CacheableDataFetchStrategy
+    implements DataFetchStrategy {
   void clearCache();
 }
 
@@ -18,12 +26,14 @@ abstract interface class CacheableDataFetchStrategy implements DataFetchStrategy
 class BaseDataFetchStrategy implements DataFetchStrategy {
   BaseDataFetchStrategy();
 
+  final _api = Api();
+
   @override
   bool get isReady => true;
 
   @override
   Future<List<Item>> fetch(String id) async {
-    return await api.getItems(id);
+    return await _api.getItems(id);
   }
 }
 
@@ -101,8 +111,10 @@ class DataRepository {
   }
 }
 
-// 切り替え
-final cachedStrategy = CachedDataFetchStrategy();
-cachedStrategy.initialize();
-final repo1 = DataRepository(cachedStrategy);
-final repo2 = DataRepository(DirectDataFetchStrategy());
+void main() {
+  // 切り替え
+  final cachedStrategy = CachedDataFetchStrategy();
+  cachedStrategy.initialize();
+  final repo1 = DataRepository(cachedStrategy);
+  final repo2 = DataRepository(DirectDataFetchStrategy());
+}
