@@ -44,17 +44,45 @@ class Article {
 }
 
 // !A || !B の状態
+
+// class User {
+//   bool hasValidCard;
+//   bool hasSufficientBalance;
+
+//   User(this.hasValidCard, this.hasSufficientBalance);
+// }
+
+// class PaymentProcessor {
+//   void process(User user) {
+//     // !A || !B の状態。条件が複雑に感じる
+//     if (!user.hasValidCard || !user.hasSufficientBalance) {
+//       throw Exception('決済に失敗しました。カード情報または残高を確認してください。');
+//     }
+
+//     // 以降、決済の正常系ロジック...
+//     print('決済完了');
+//   }
+// }
+
+// !A || !B の状態を整理して、!(A && B) の状態を表すコード
+
 class User {
   bool hasValidCard;
   bool hasSufficientBalance;
 
   User(this.hasValidCard, this.hasSufficientBalance);
+
+  // 抽出した関数：オブジェクト自身に「決済可能か？」を問う形にする（カプセル化）
+  bool canMakePayment() {
+    return hasValidCard && hasSufficientBalance; // A && B の部分
+  }
 }
 
 class PaymentProcessor {
   void process(User user) {
-    // !A || !B の状態。条件が複雑に感じる
-    if (!user.hasValidCard || !user.hasSufficientBalance) {
+    // !(A && B) の状態。
+    // 「決済可能（canMakePayment）ではない（!）」と直感的に読める
+    if (!user.canMakePayment()) {
       throw Exception('決済に失敗しました。カード情報または残高を確認してください。');
     }
 
