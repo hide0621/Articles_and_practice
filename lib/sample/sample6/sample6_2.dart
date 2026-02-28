@@ -42,3 +42,23 @@ class Article {
     return isDraft || isDeleted;
   }
 }
+
+// !A || !B の状態
+class User {
+  bool hasValidCard;
+  bool hasSufficientBalance;
+
+  User(this.hasValidCard, this.hasSufficientBalance);
+}
+
+class PaymentProcessor {
+  void process(User user) {
+    // !A || !B の状態。条件が複雑に感じる
+    if (!user.hasValidCard || !user.hasSufficientBalance) {
+      throw Exception('決済に失敗しました。カード情報または残高を確認してください。');
+    }
+
+    // 以降、決済の正常系ロジック...
+    print('決済完了');
+  }
+}
