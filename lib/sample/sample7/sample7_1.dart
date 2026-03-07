@@ -1,3 +1,5 @@
+/// for文のネストが深くなった場合の例
+
 // --- データモデルの定義 ---
 class Employee {
   final String name;
