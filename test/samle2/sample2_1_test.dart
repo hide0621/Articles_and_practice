@@ -4,11 +4,15 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('isStringLongメソッドのテスト', () {
     test('5文字以下ならfalseになる', () {
-      expect(isStringLong('abcde'), isFalse);
+      final message = Message();
+      expect(message.isStringLong('abcde'), isFalse);
+      expect(message.result, isFalse);
     });
 
     test('6文字以上ならtrueになる', () {
-      expect(isStringLong('abcdef'), isTrue);
+      final message = Message();
+      expect(message.isStringLong('abcdef'), isTrue);
+      expect(message.result, isTrue);
     });
   });
 }
