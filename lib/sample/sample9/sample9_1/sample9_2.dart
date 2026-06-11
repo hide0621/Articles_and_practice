@@ -1,6 +1,6 @@
 // main.dart
-import 'dart:mirrors';
-import 'sample9_1.dart';
+// import 'dart:mirrors';
+// import 'sample9_1.dart';
 
 /// 内容結合の例：リフレクションを使用してプライベートメソッドにアクセスする（下流モジュール）
 /// アンチパターンコード
