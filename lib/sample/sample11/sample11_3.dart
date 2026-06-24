@@ -43,7 +43,8 @@ class Caller {
   Caller(this.calculator);
 
   void callCalculator() {
-    int parameter = 5; 
-    print(calculator.calculate(parameter));
+    final result = calculator.calculate(5);
+    // ignore: avoid_print
+    print(result);
   }
 }
