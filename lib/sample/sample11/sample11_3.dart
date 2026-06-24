@@ -48,3 +48,27 @@ class Caller {
     print(result);
   }
 }
+
+/// static変数による外部結合の例
+
+class ClassA {
+  static const name = 'ClassA';
+
+  String getName() {
+    return name;
+  }
+}
+
+class ClassB {
+  String getClassAName() {
+    return ClassA.name;
+  }
+}
+
+class ClassC {
+  // ignore: non_constant_identifier_names
+  void Greet() {
+    // ignore: avoid_print
+    print('Hello, ${ClassA.name}!');
+  }
+}
