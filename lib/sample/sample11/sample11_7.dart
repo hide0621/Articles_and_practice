@@ -8,3 +8,15 @@
 //     closable.close();
 //   }
 // }
+
+// class Caller {
+//   final UserListPresenter _userListPresenter;
+//   Caller({UserListPresenter userListPresenter}) : _userListPresenter = userListPresenter;
+
+//   void updateUserList() {
+//     final users = ...
+//     userListPresenter.users = users;
+//     ...
+//     userListPresenter.notifyUserListUpdated();
+//   }
+// }
