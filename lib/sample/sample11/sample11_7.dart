@@ -66,3 +66,23 @@
 //     view.isVisible = false;
 //   }
 // }
+
+// ignore: dangling_library_doc_comments
+/// データ結合にして斜め読みもしやすくした例
+
+// class Caller {
+//   ...
+//   void updateViews() {
+//     var result = ...;
+//     ...
+//     var isErrorViewVisible = result.isError;
+//     _errorViewPresenter.setErrorViewVisibility(isErrorViewVisible);
+//   }
+// }
+
+// class ErrorViewPresenter {
+//   ...
+//   void setErrorViewVisibility(bool isVisible) {
+//     view.isVisible = isVisible;
+//   }
+// }
